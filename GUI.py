@@ -36,7 +36,7 @@ class Bang:
             self.cubes[row][col].set(val)
             self.update_model()
 
-            if thoa_man(self.model, val, (row,col)) and self.solve():
+            if thoa_man(self.model, val, (row,col)) and self.giai():
                 return True
             else:
                 self.cubes[row][col].set(0)
@@ -62,7 +62,7 @@ class Bang:
             for j in range(self.cols):
                 self.cubes[i][j].draw(self.win)
 
-    def select(self, row, col):
+    def chon(self, row, col):
         for i in range(self.rows):
             for j in range(self.cols):
                 self.cubes[i][j].selected = False
@@ -91,7 +91,7 @@ class Bang:
                     return False
         return True
 
-    def solve(self):
+    def giai(self):
         find = tim_o_trong(self.model)
         if not find:
             return True
@@ -102,7 +102,7 @@ class Bang:
             if thoa_man(self.model, i, (row, col)):
                 self.model[row][col] = i
 
-                if self.solve():
+                if self.giai():
                     return True
 
                 self.model[row][col] = 0
@@ -121,7 +121,7 @@ class Bang:
             if thoa_man(self.model, i, (row, col)):
                 self.model[row][col] = i
                 self.cubes[row][col].set(i)
-                self.cubes[row][col].draw_change(self.win, True)
+                self.cubes[row][col].ve_thay_doi(self.win, True)
                 self.update_model()
                 pygame.display.update()
                 pygame.time.delay(100)
@@ -132,7 +132,7 @@ class Bang:
                 self.model[row][col] = 0
                 self.cubes[row][col].set(0)
                 self.update_model()
-                self.cubes[row][col].draw_change(self.win, False)
+                self.cubes[row][col].ve_thay_doi(self.win, False)
                 pygame.display.update()
                 pygame.time.delay(100)
 
@@ -169,7 +169,7 @@ class O:
         if self.selected:
             pygame.draw.rect(win, (255,0,0), (x,y, gap ,gap), 3)
 
-    def draw_change(self, win, g=True):
+    def ve_thay_doi(self, win, g=True):
         fnt = pygame.font.SysFont("comicsans", 40)
 
         gap = self.width / 9
@@ -322,7 +322,7 @@ def main():
                 pos = pygame.mouse.get_pos()
                 clicked = bang.click(pos)
                 if clicked:
-                    bang.select(clicked[0], clicked[1])
+                    bang.chon(clicked[0], clicked[1])
                     key = None
 
         if bang.selected and key != None:
