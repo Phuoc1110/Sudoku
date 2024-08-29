@@ -4,7 +4,7 @@ pygame.font.init()
 
 
 class Bang:
-    bang = [
+    board = [
         [7, 8, 0, 4, 0, 0, 1, 2, 0],
         [6, 0, 0, 0, 7, 5, 0, 0, 9],
         [0, 0, 0, 6, 0, 1, 0, 7, 8],
@@ -19,7 +19,7 @@ class Bang:
     def __init__(self, rows, cols, width, height, win):
         self.rows = rows
         self.cols = cols
-        self.cubes = [[O(self.bang[i][j], i, j, width, height) for j in range(cols)] for i in range(rows)]
+        self.cubes = [[O(self.board[i][j], i, j, width, height) for j in range(cols)] for i in range(rows)]
         self.width = width
         self.height = height
         self.model = None
@@ -92,7 +92,7 @@ class Bang:
         return True
 
     def solve(self):
-        find = tim_o_trong(self.model)
+        find = tim_o_trongy(self.model)
         if not find:
             return True
         else:
@@ -111,7 +111,7 @@ class Bang:
 
     def giai_SDK(self):
         self.update_model()
-        find = tim_o_trong(self.model)
+        find = tim_o_trongy(self.model)
         if not find:
             return True
         else:
@@ -192,7 +192,7 @@ class O:
         self.temp = val
 
 
-def tim_o_trong(bo):
+def tim_o_trongy(bo):
     for i in range(len(bo)):
         for j in range(len(bo[0])):
             if bo[i][j] == 0:
@@ -221,20 +221,14 @@ def thoa_man(bo, num, pos):
     return True
 
 
-
-def velai(win, bang, time, strikes):
+def redraw_window(win, board, time, strikes):
     win.fill((255,255,255))
-    
-    fnt = pygame.font.SysFont("comicsans", 30) 
-    
+    fnt = pygame.font.SysFont("comicsans", 40)
     text = fnt.render("Time: " + t_gian(time), 1, (0,0,0))
-    win.blit(text, (380, 540))
-    
+    win.blit(text, (540 - 160, 560))
     text = fnt.render("X " * strikes, 1, (255, 0, 0))
     win.blit(text, (20, 560))
-    
-    bang.draw()
-
+    board.draw()
 
 
 def t_gian(secs):
@@ -249,7 +243,7 @@ def t_gian(secs):
 def main():
     win = pygame.display.set_mode((540,600))
     pygame.display.set_caption("Sudoku")
-    bang = Bang(9, 9, 540, 540, win)
+    board = Bang(9, 9, 540, 540, win)
     key = None
     run = True
     start = time.time()
@@ -299,36 +293,36 @@ def main():
                 if event.key == pygame.K_KP9:
                     key = 9
                 if event.key == pygame.K_DELETE:
-                    bang.clear()
+                    board.clear()
                     key = None
 
                 if event.key == pygame.K_SPACE:
-                    bang.giai_SDK()
+                    board.giai_SDK()
 
                 if event.key == pygame.K_RETURN:
-                    i, j = bang.selected
-                    if bang.cubes[i][j].temp != 0:
-                        if bang.place(bang.cubes[i][j].temp):
+                    i, j = board.selected
+                    if board.cubes[i][j].temp != 0:
+                        if board.place(board.cubes[i][j].temp):
                             print("Success")
                         else:
                             print("Wrong")
                             strikes += 1
                         key = None
 
-                        if bang.is_finished():
+                        if board.is_finished():
                             print("Game over")
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
-                clicked = bang.click(pos)
+                clicked = board.click(pos)
                 if clicked:
-                    bang.select(clicked[0], clicked[1])
+                    board.select(clicked[0], clicked[1])
                     key = None
 
-        if bang.selected and key != None:
-            bang.sketch(key)
+        if board.selected and key != None:
+            board.sketch(key)
 
-        velai(win, bang, play_time, strikes)
+        redraw_window(win, board, play_time, strikes)
         pygame.display.update()
 
 
